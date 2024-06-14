@@ -24,7 +24,7 @@ sym<-read_csv("data/coral_physiology/symbiont_rel_abund.csv")
 Merge using left_join, such that all observations in phys are kept 
 
 ```{r}
-merged<-left_join(phys, sym)
+merged <- full_join(phys, sym)
 ```
 
 # Write new merged file to output 
