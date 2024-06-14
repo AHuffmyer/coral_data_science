@@ -2,39 +2,34 @@
 title: "Merging physiology and symbiont dataframes"
 output: html_document
 date: "2024-06-14"
+editor_options: 
+  chunk_output_type: console
 ---
 
-Read in 
-Merge
-See waht values are missing 
-Output
+# Set up 
 
-
-
-
-
-
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+library(tidyverse)
 ```
 
-## R Markdown
+# Read in data files 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+phys<-read_csv("data/coral_physiology/timeseries_physiology.csv")
+sym<-read_csv("data/coral_physiology/symbiont_rel_abund.csv")
 ```
 
-## Including Plots
+# Merge files by colony_id
 
-You can also embed plots, for example:
+Merge using left_join, such that all observations in phys are kept 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+merged<-left_join(phys, sym)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Write new merged file to output 
+
+```{r}
+write_csv(merged, file="data/coral_physiology/merged_data.csv")
+```
+
