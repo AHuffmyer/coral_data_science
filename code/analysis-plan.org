@@ -1,0 +1,68 @@
+# This is an org-mode file, but can be readily converted to Rmarkdown
+* Trajectory Response Model
+
+Ideally, we would like to learn a function \(f\) that takes as input
+- Site
+- Species
+- Symbiont Community Information
+
+and returns a "trajectory" (a function of time) in \(\mathbb{R}^d\). This trajectory can be
+mapped to a corresponding trajectory in \(\mathbb{R}^p\), which reflects
+our \(p\) physiological variables. In particular, we would like for this latter
+map to be linear. If \(v(t) \in \mathbb{R}^d\) is a point in the trajectory,
+then it corresponds to a point \(u(t) \in \mathbb{R}^p\) with the relationship
+\[
+u(t) = \sum\limits_{j = 1}^d v_j (t) \gamma_j,
+\]
+where \(\gamma_j \in \mathbb{R}^p\) is a basis vector. Gathering all of our basis
+vectors together as
+\[
+\Gamma =
+\begin{bmatrix}
+\gamma_1 & \gamma_2 & \ldots & \gamma_d
+\end{bmatrix} \in \mathbb{R}^{p \times d}
+\]
+we can write this more compactly as
+\[
+u(t) = \Gamma v(t).
+\]
+* Reduced Rank Regression
+Reduced Rank Regression (RRR) seems a natural starting point to learn a
+trajectory of the sort discussed in [[*Trajectory Response Model][Trajectory Response Model]].
+
+RRR is a means of achieving multivariate linear regression with a rank
+constraint on the coefficients. Let \(Y \in \mathbb{R}^{n \times q}\) be a
+matrix of response variables (one per column).
+Let \(X \in \mathbb{R}^{n \times p}\) be a design matrix, and
+let \(B \in \mathbb{R}^{p \times q}\) be a matrix of (typically unknown)
+regression coefficients. Our model is then
+\[
+Y = X B + \epsilon.
+\]
+A natural estimator of \(B\) minimizes the sum of squared errors, i.e.,
+\[
+B^{\star} \in \operatorname{argmin} \left\lVert Y - X B \right\rVert_F^2,
+\]
+where \(\left\lVert \cdot \right\rVert_F^2\) denotes the squared Frobenius norm
+(i.e., the sum of the squared elements of its argument). A closed form
+expression for \(B^{\star}\) is given by
+\[
+B^{\star} = \left( B^{\intercal} B \right)^{-1} B^{\intercal} Y.
+\]
+One noteworthy property of this estimator is that it is actually precisely the
+same answer if we had separately fit \(q\)-many regression models, one for each
+column of \(Y\). However, writing it this way allows us to do more interesting
+things when solving the problem simultaneously.
+
+Reduced rank regression essentially finds
+\[
+B^{\star}_{\text{RRR}(K)} \in
+\operatorname*{argmin}_{\operatorname{rank} (B) \leq K}
+\left\lVert Y - XB \right\rVert_F^2.
+\]
+
+
+* org-mode config
+
+* Spell Check
+#  LocalWords:  Symbiont
