@@ -13,28 +13,7 @@ library(tidyverse)
 library(data.table)
 ```
 
-# Merge files together 
 
-## Read in data files 
-
-```{r}
-phys<-read_csv("data/coral_physiology/timeseries_physiology.csv")
-sym<-read_csv("data/coral_physiology/symbiont_rel_abund.csv")
-```
-
-## Merge files by colony_id
-
-Merge using left_join, such that all observations in phys are kept 
-
-```{r}
-merged <- full_join(phys, sym)
-```
-
-## Write new merged file to output 
-
-```{r}
-write_csv(merged, file="data/coral_physiology/merged_data.csv")
-```
 
 # Read in ITS2 data and summarize by colony_id
 
@@ -64,4 +43,27 @@ sums <- result[, .(total_sum = sum(total_sum)), by = colony_id]
 
 All values add to 1. 
 
+# Merge files together - symbiont composition and physiology
+
+## Read in data files 
+
+```{r}
+phys<-read_csv("data/coral_physiology/timeseries_physiology.csv")
+```
+
+## Merge files by colony_id
+
+Merge using left_join, such that all observations in phys are kept 
+
+```{r}
+merged <- full_join(phys, result)
+merged <- merged %>%
+  select(!total_sum)
+```
+
+## Write new merged file to output 
+
+```{r}
+write_csv(merged, file="data/coral_physiology/merged_data.csv")
+```
 
