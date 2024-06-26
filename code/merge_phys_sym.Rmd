@@ -10,16 +10,19 @@ editor_options:
 
 ```{r}
 library(tidyverse)
+library(data.table)
 ```
 
-# Read in data files 
+# Merge files together 
+
+## Read in data files 
 
 ```{r}
 phys<-read_csv("data/coral_physiology/timeseries_physiology.csv")
 sym<-read_csv("data/coral_physiology/symbiont_rel_abund.csv")
 ```
 
-# Merge files by colony_id
+## Merge files by colony_id
 
 Merge using left_join, such that all observations in phys are kept 
 
@@ -27,9 +30,38 @@ Merge using left_join, such that all observations in phys are kept
 merged <- full_join(phys, sym)
 ```
 
-# Write new merged file to output 
+## Write new merged file to output 
 
 ```{r}
 write_csv(merged, file="data/coral_physiology/merged_data.csv")
 ```
+
+# Read in ITS2 data and summarize by colony_id
+
+Read in ITS2 data and summarize by colony_id, because symbiont communities didnt change over time. Calculate this as the average relative abundance of each taxa for each colony. 
+
+## Read in data 
+
+```{r}
+sym<-fread("data/coral_physiology/symbiont_rel_abund.csv")
+```
+
+## Calculate mean abundance for each taxa by colony ID
+
+```{r}
+result <- sym[, lapply(.SD, mean, na.rm = TRUE), by = .(colony_id, site, host_genus), .SDcols = sapply(sym, is.numeric)]
+```
+
+## Calculate the sum of all taxa to check that relative abundance does not exceed 1 
+
+```{r}
+# Calculate the sum of all numeric columns for each row and add it as a new column
+sums_result <- result[, total_sum := rowSums(.SD, na.rm = TRUE), .SDcols = sapply(result, is.numeric)]
+
+# Calculate the sum of the new column grouped by colony_id
+sums <- result[, .(total_sum = sum(total_sum)), by = colony_id]
+```
+
+All values add to 1. 
+
 
