@@ -60,6 +60,11 @@ B^{\star}_{\text{RRR}(K)} \in
 \operatorname*{argmin}_{\operatorname{rank} (B) \leq K}
 \left\lVert Y - XB \right\rVert_F^2.
 \]
+** Modifications
+Rather than just fitting vanilla RRR, we will use it as a starting point from
+which we can incorporate additional penalties and modeling choices to reflect
+the structure of the data. For example, we have repeated observations of the
+same units over time.
 
 
 * org-mode config
