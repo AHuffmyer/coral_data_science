@@ -65,7 +65,68 @@ Rather than just fitting vanilla RRR, we will use it as a starting point from
 which we can incorporate additional penalties and modeling choices to reflect
 the structure of the data. For example, we have repeated observations of the
 same units over time.
+* Hierarchical Repeated Measures Model
+The first version of this was developed during a Zoom meeting involving Dan and
+Ishita on [2025-04-08 Tue].
 
+The idea is to have a *latent* part (which is smooth over time) and an observed
+part.
+** Latent Model
+Let \(z_{i, t} \in \mathbb{R}^{d}\) be a latent vector corresponding to
+the \(i\)th sample taken at time \(t\).
+Let \(L: \left[ n \right] \to \left\{ \text{Mahana, Hilton, Manava} \right\}\)
+be a function that maps samples to site, and
+let
+\(K: \left[ n \right] \to \left\{ \text{Acropora, Pocillopora, Porites} \right\}\)
+be a function that maps samples to species.
+
+We want our model for \(z\) to have three properties
+1. It should have "smooth" trajectories in \(t\) for a fixed \(i\)
+2. It should capture species-specific effects
+3. It should be reflect susceptibility to environmental context (e.g., site,
+   temperature, pH, etc)
+
+To this end, we propose the following recursive model:
+\begin{equation}
+\label{eq:z-latent-recursive-model}
+z_{i, t} = A w_{i, t} + z_{i, t - 1} + \delta_{i, t},
+\end{equation}
+where \(w_{i, t} \in \mathbb{R}^{q}\) is a vector holding \(q\) directly
+observed context variables, including site
+(dummy-coded), \(A \in \mathbb{R}^{d \times q}\) is a coefficient matrix that
+encodes how the context variables impact \(z\), and \(\delta_{i, t}\) is random
+noise/innovation.
+The base case for this model is given by
+\begin{equation}
+\label{eq:z-latent-base-model}
+z_{i, 1} = \mu_{K \left( i \right)} + \delta_{i, 1},
+\end{equation}
+where \(\mu_{K \left( i \right)}\) is a species-specific intercept,
+and \(\delta_{i, 1}\) is random noise/innovation.
+** Observation Model
+Let \(x_{i, t} \in \mathbb{R}^{p}\) hold the observed data from the \(i\)th
+sample at time \(t\). In our current data, \(p = 11\). First, let's assume a
+very generic observation model:
+\begin{equation}
+\label{eq:x-observation-generic-model}
+x_{i, t} = f \left( z_{i, t} \right) + \epsilon_{i, t},
+\end{equation}
+where \(f: \mathbb{R}^{d} \to \mathbb{R}^{p}\) is a function that maps the
+latent variable \(z\) to the observed variable \(x\), and \(\epsilon_{i, t}\) is
+random noise. Next, we turn our attention to \(f\).
+
+Suppose that \(f\) is linear. Then we can rewrite the above model as 
+\begin{equation}
+\label{eq:x-observation-linear-model}
+x_{i, t} = B z_{i, t} + \epsilon_{i, t},
+\end{equation}
+where \(B \in \mathbb{R}^{p \times d}\) is a matrix of coefficients.
+In order to render the model easier to interpret, we can instead over-parameterize our model, and
+rewrite it as
+\begin{equation}
+\label{eq:x-observation-linear-overparam-model}
+x_{i, t} = B z_{i, t} + B^{\left( K \left( i \right) \right)} z_{i, t} + \epsilon_{i, t}.
+\end{equation}
 
 * org-mode config
 
